@@ -30,7 +30,7 @@ public class Test {
 
         // 2  don't use chromeOptions
         //ChromeDriver chromeDriver2 = new ChromeDriverBuilder()
-        //        .build("/Users/lwz/Documents/software/chromedriver/chromedriver-2");
+        //        .build("your driver home");
 
         chromeDriver1.get("your url");
         //chromeDriver2.get("your url");
