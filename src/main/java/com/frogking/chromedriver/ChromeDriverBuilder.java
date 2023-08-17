@@ -3,6 +3,7 @@ package com.frogking.chromedriver;
 
 import com.alibaba.fastjson.JSONObject;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.*;
@@ -203,8 +204,9 @@ public class ChromeDriverBuilder {
     private ChromeOptions setHeadless(ChromeOptions chromeOptions,boolean headless){
         if (headless) {
             if(args!=null){
-                if(!args.contains("--headless")){
-                    chromeOptions.addArguments("--headless");
+                if(!args.contains("--headless=new") || !args.contains("--headless=chrome")){
+                    //we consider that the chromedriver version is greater than 108.x.x.x
+                    chromeOptions.addArguments("--headless=new");
                 }
                 boolean hasWindowSize = false;
                 for(String arg:args) {
@@ -223,7 +225,7 @@ public class ChromeDriverBuilder {
                     chromeOptions.addArguments("--no-sandbox");
                 }
             }else {
-                chromeOptions.addArguments("--headless");
+                chromeOptions.addArguments("--headless=new");
                 chromeOptions.addArguments("--window-size=1920,1080");
                 chromeOptions.addArguments("--start-maximized");
                 chromeOptions.addArguments("--no-sandbox");
@@ -477,8 +479,6 @@ public class ChromeDriverBuilder {
         Process browser = createBrowserProcess(chromeOptions,needPrintChromeInfo);
 
         //step12, make undetectedChrome chrome driver
-
-
         UndetectedChromeDriver undetectedChromeDriver =
                 new UndetectedChromeDriver(chromeOptions,headless,_keepUserDataDir,_userDataDir,browser);
 
@@ -506,7 +506,7 @@ public class ChromeDriverBuilder {
             Field argsField = options.getClass().getSuperclass().getDeclaredField("args");
             argsField.setAccessible(true);
             List<String> args = (List<String>)argsField.get(options);
-            if(args.contains("--headless")){
+            if(args.contains("--headless")||args.contains("--headless=new")||args.contains("--headless=chrome")){
                 headless = true;
             }
         }catch (Exception ignored){ }

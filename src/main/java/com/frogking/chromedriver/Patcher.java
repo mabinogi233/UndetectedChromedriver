@@ -1,8 +1,12 @@
 package com.frogking.chromedriver;
 
+import org.checkerframework.checker.regex.qual.Regex;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Patcher {
 
@@ -31,8 +35,8 @@ public class Patcher {
             String line = null;
 
             while ((line = br.readLine()) != null) {
-                if (line.contains("cdc_")) {
-                    return false;
+                if (line.contains("undetected chromedriver")) {
+                    return true;
                 }
             }
 
@@ -47,7 +51,7 @@ public class Patcher {
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private int patchExe(){
@@ -58,29 +62,30 @@ public class Patcher {
         try {
             file = new RandomAccessFile(_driverExecutablePath, "rw");
 
-            byte[] buffer = new byte[1];
-            StringBuilder check = new StringBuilder("....");
-            int read = 0;
-
-            while (true) {
-                read = file.read(buffer, 0, buffer.length);
-
-                if (read == 0) {
+            byte[] buffer = new byte[1024];
+            StringBuilder stringBuilder = new StringBuilder();
+            long read = 0;
+            while(true){
+                read = file.read(buffer,0,buffer.length);
+                if(read == 0 || read == -1){
                     break;
                 }
-
-                check.delete(0, 1);
-
-                check.append((char) buffer[0]);
-
-                if (check.toString().equals("cdc_")) {
-                    file.seek(file.getFilePointer() - 4);
-
-                    byte[] bytes = replacement.getBytes(StandardCharsets.ISO_8859_1);
-
-                    file.write(bytes, 0, bytes.length);
-                    linect++;
+                stringBuilder.append(new String(buffer,0,(int)read,StandardCharsets.ISO_8859_1));
+            }
+            String content = stringBuilder.toString();
+            Pattern pattern = Pattern.compile("\\{window\\.cdc.*?;\\}");
+            Matcher matcher = pattern.matcher(content);
+            if(matcher.find()){
+                String group = matcher.group();
+                StringBuilder newTarget = new StringBuilder("{console.log(\"undetected chromedriver 1337!\"}");
+                int k = group.length() - newTarget.length();
+                for (int i = 0; i < k; i++) {
+                    newTarget.append(" ");
                 }
+                String newContent = content.replace(group, newTarget.toString());
+
+                file.seek(0);
+                file.write(newContent.getBytes(StandardCharsets.ISO_8859_1));
             }
 
         }catch (Exception e){
@@ -100,7 +105,7 @@ public class Patcher {
     private String genRandomCdc() {
         String chars = "abcdefghijklmnopqrstuvwxyz";
         Random random = new Random();
-
+        /*
         char[] cdc = new char[26];
 
         for(int i=0;i<26;i++){
@@ -111,6 +116,13 @@ public class Patcher {
         }
         cdc[2] = cdc[0];
         cdc[3] = '_';
+        return new String(cdc);
+
+         */
+        char[] cdc = new char[27];
+        for(int i=0;i<27;i++){
+            cdc[i] = chars.charAt(random.nextInt(chars.length()));
+        }
         return new String(cdc);
     }
 

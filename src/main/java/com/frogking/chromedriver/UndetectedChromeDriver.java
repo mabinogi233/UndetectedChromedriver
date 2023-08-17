@@ -1,6 +1,8 @@
 package com.frogking.chromedriver;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.*;
@@ -15,6 +17,8 @@ public class UndetectedChromeDriver extends ChromeDriver{
     private boolean _keepUserDataDir;
 
     private String _userDataDir;
+
+    private ChromeOptions chromeOptions;
 
 
     public void get(String url) {
@@ -58,7 +62,9 @@ public class UndetectedChromeDriver extends ChromeDriver{
                                   boolean keepUserDataDir,
                                   String userDataDir,
                                   Process browser){
+
         super(chromeOptions);
+        this.chromeOptions = chromeOptions;
         _browser = browser;
         _headless = headless;
         _keepUserDataDir = keepUserDataDir;
@@ -245,6 +251,13 @@ public class UndetectedChromeDriver extends ChromeDriver{
         this.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
     }
 
+    @Override
+    public void startSession(Capabilities capabilities) {
+        if (capabilities==null){
+            capabilities = this.chromeOptions;
+        }
+        super.startSession(capabilities);
+    }
 
 }
 

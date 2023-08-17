@@ -3,6 +3,9 @@
 https://github.com/mabinogi233/UndetectedChromedriver
 ___
 
+**now the driver is recommended chromedriver version > 108, if you wang to
+use <108, you should make --headless=chrome not --headless=new**
+
 Custom Selenium Chromedriver for Java can pass almost all selenium check. It's the Java version for undetected-chromedriver.
 
 This tool is refer to **ultrafunkamsterdam/undetected-chromedriver** and **fysh711426
