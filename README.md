@@ -38,7 +38,12 @@ It doesn't use by Maven because when I use maven to import selenium version 4, M
 String driver_home = "YOUR DRIVER HOME";
 ChromeOptions chrome_options = new ChromeOptions();
 chrome_options.addArguments("--window-size=1920,1080");
-chrome_options.addArguments("--headless");
+
+//when chrome version > 108, use "--headless=new"
+chrome_options.addArguments("--headless=new");
+
+//when chrome version <= 108, use "--headless=chrome"
+//chrome_options.addArguments("--headless=chrome");
 
 //ChromeDriverBuilder could throw RuntimeError, you can catch it, *catch it is unnecessary
 ChromeDriver chromeDriver1 = new ChromeDriverBuilder()
@@ -59,9 +64,9 @@ chromeDriver2.get("https://bot.sannysoft.com");
 
 ---
 
-## · v1.0.0 version log
+## · v1.0.1 version log
 
-This is the first version.
+This is the second version. fix headless mode can't use problem.
 
 Use ChromeDriverBuilder to get a UndetectedChromeDriver
 
